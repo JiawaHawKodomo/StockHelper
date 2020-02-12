@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@WebAppConfiguration // 开启web应用配置
+@WebAppConfiguration
 @SpringBootTest(classes = {StockhelperApplication.class})
 public class StockhelperApplicationTests {
 
