@@ -1,2 +1,18 @@
 server:
   port: 80
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/stockhelper?characterEncoding=UTF-8&useSSL=true&serverTimezone=GMT%2B8
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true

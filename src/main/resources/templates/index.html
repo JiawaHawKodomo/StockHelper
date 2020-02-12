@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.css}">
+    <meta charset="UTF-8">
+    <title>股票筛选表格</title>
+</head>
+<body>
+<div>
+    <p>请选择时间:</p>
+    <input type="date" id="date-input">
+    <button id="search-button">查询</button>
+</div>
+<table class="table">
+    <tr class="tr-head">
+        <th>股票id</th>
+        <th>名称</th>
+        <th>换手率</th>
+        <th>MA5上涨</th>
+        <th>MA10上涨</th>
+        <th>MA30上涨</th>
+        <th>MA60上涨</th>
+        <th>MA120上涨</th>
+    </tr>
+
+    <tr class="data-tr" style="display: none">
+        <th>111111</th>
+        <th>名称</th>
+        <th>1%</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+    </tr>
+</table>
+
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+</body>
+</html>
+
