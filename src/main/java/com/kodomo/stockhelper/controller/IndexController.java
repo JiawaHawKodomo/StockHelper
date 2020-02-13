@@ -3,18 +3,22 @@ package com.kodomo.stockhelper.controller;
 import com.kodomo.stockhelper.dao.RecommendedStockDao;
 import com.kodomo.stockhelper.entity.RecommendedStock;
 import com.kodomo.stockhelper.entity.StockInfo;
+import com.kodomo.stockhelper.timer.DailyTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Shuaiyu Yao
@@ -24,9 +28,11 @@ import java.util.List;
 public class IndexController {
 
     private final RecommendedStockDao recommendedStockDao;
+    private final DailyTask dailyTask;
 
-    public IndexController(RecommendedStockDao recommendedStockDao) {
+    public IndexController(RecommendedStockDao recommendedStockDao, DailyTask dailyTask) {
         this.recommendedStockDao = recommendedStockDao;
+        this.dailyTask = dailyTask;
     }
 
 
@@ -53,5 +59,14 @@ public class IndexController {
         example.setDate(date);
         List<RecommendedStock> result = recommendedStockDao.findAll(Example.of(example), Sort.by(Sort.Order.desc("turnOverRate")));
         return result;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/refresh")
+    public Map<String, String> refresh() {
+        dailyTask.dailyFetch();
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "ok");
+        return response;
     }
 }

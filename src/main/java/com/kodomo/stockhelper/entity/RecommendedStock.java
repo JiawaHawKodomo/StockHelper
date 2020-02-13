@@ -36,16 +36,8 @@ public class RecommendedStock {
     @Column(name = "turn_over_rate")
     private Double turnOverRate;
 
-    @Column
-    private Double ma5;
-    @Column
-    private Double ma10;
-    @Column
-    private Double ma30;
-    @Column
-    private Double ma60;
-    @Column
-    private Double ma120;
+    @Column(name = "ma")
+    private String ma;
 
     @Column(name = "date", updatable = false)
     @Temporal(TemporalType.DATE)

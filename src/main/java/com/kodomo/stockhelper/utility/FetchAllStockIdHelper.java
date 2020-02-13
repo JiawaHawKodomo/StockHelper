@@ -82,6 +82,7 @@ public class FetchAllStockIdHelper {
             Elements elements = div.getElementsByTag("a");
 
             int totalCount = 0;
+            List<StockInfo> stockInfoList = new ArrayList<>();
             for (Element e : elements) {
                 String elementText = e.text();
                 if (elementText != null && !elementText.equals("")) {
@@ -91,11 +92,13 @@ public class FetchAllStockIdHelper {
                     if (leftIndex != -1 && rightIndex != -1) {
                         String name = elementText.substring(0, leftIndex);
                         String id = elementText.substring(leftIndex + 1, rightIndex);
-                        saveStockId(name, id);
+                        StockInfo stockInfo = getStockId(name, id);
+                        stockInfoList.add(stockInfo);
                         totalCount++;
                     }
                 }
             }
+            stockInfoDao.saveAll(stockInfoList);
             return totalCount;
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,15 +107,15 @@ public class FetchAllStockIdHelper {
     }
 
     /**
-     * 保存股票代码和名字
+     * 返回股票代码和名字
      *
      * @param name
      * @param id
      */
-    private void saveStockId(String name, String id) {
+    private StockInfo getStockId(String name, String id) {
         StockInfo stockInfo = new StockInfo();
         stockInfo.setStockId(id);
         stockInfo.setName(name);
-        stockInfoDao.save(stockInfo);
+        return stockInfo;
     }
 }

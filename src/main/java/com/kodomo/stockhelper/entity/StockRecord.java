@@ -1,6 +1,7 @@
 package com.kodomo.stockhelper.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,8 +14,7 @@ import java.util.Date;
  * @create 2020-02-12 23:14
  **/
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "stock_record",
         indexes = {
                 @Index(name = "record_stockIdAndDate", columnList = "stock_id, date", unique = true)

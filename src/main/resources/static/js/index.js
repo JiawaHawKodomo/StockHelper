@@ -26,28 +26,35 @@ function searchAndShow() {
         data: {},
         dataType: 'json',
         success: function (data) {
+            console.log(data);
             $('.data-tr').remove();
+            var maKey = [];
+            if (data.size !== 0) {
+                var maObject = JSON.parse(data[0].ma.replace(/'/g, '"'));
+                console.log(maKey);
+                for (var key in maObject) {
+                    $('.tr-head').append(
+                        $('<th></th>').text(key).attr('class', 'data-tr')
+                    );
+                    maKey.push(key);
+                }
+            }
             for (var a in data) {
                 a = data[a];
-                $('.table').append(
-                    $('<tr></tr>').attr('class', 'data-tr').append(
-                        $('<td></td>').text(a.stockInfo.stockId)
-                    ).append(
-                        $('<td></td>').text(a.stockInfo.name)
-                    ).append(
-                        $('<td></td>').text(a.turnOverRate + '%')
-                    ).append(
-                        $('<td></td>').text(a.ma5)
-                    ).append(
-                        $('<td></td>').text(a.ma10)
-                    ).append(
-                        $('<td></td>').text(a.ma30)
-                    ).append(
-                        $('<td></td>').text(a.ma60)
-                    ).append(
-                        $('<td></td>').text(a.ma120)
-                    )
-                )
+                var maObject = JSON.parse(a.ma.replace(/'/g, '"'));
+                var tr = $('<tr></tr>').attr('class', 'data-tr').append(
+                    $('<td></td>').text(a.stockInfo.stockId)
+                ).append(
+                    $('<td></td>').text(a.stockInfo.name)
+                ).append(
+                    $('<td></td>').text(a.turnOverRate + '%')
+                );
+                for (var key in maKey) {
+                    tr.append(
+                        $('<td></td>').text(maObject[maKey[key]])
+                    );
+                }
+                $('.table').append(tr);
             }
         }
     })
@@ -59,3 +66,20 @@ $('#search-button').on('click', function () {
 
 $('#date-input').val(dateFormat('YYYY-mm-dd', new Date()));
 searchAndShow();
+
+$('#daily-button').on('click', function () {
+    $(this).attr('disabled', 'disabled');
+    $(this).text('请等待...');
+    $.ajax({
+        type: 'POST',
+        url: '/refresh',
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            if (data.status){
+                alert('计算完成');
+                location = location;
+            }
+        }
+    });
+});
