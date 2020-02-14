@@ -3,6 +3,8 @@ server:
 spring:
   profiles:
     active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
     show-sql: false
@@ -18,7 +20,6 @@ spring:
 spring:
   profiles: dev
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
     url: jdbc:mysql://localhost:3306/stockhelper?characterEncoding=UTF-8&useSSL=true&serverTimezone=GMT%2B8
@@ -33,7 +34,6 @@ stockhelper:
 spring:
   profiles: prod
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
     url: jdbc:mysql://localhost:3306/stockhelper?characterEncoding=UTF-8&useSSL=true&serverTimezone=GMT%2B8
