@@ -28,6 +28,7 @@ public class StockhelperApplicationTests {
     private RecommendedStockDao recommendedStockDao;
 
     @Test
+    @Ignore
     public void test1() {
         StockInfo stockInfo = new StockInfo();
         stockInfo.setStockId("1111");
@@ -43,6 +44,7 @@ public class StockhelperApplicationTests {
     }
 
     @Test
+    @Ignore
     public void test2() {
         StockInfo s = new StockInfo();
         s.setStockId("1111");

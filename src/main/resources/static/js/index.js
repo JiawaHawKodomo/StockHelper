@@ -26,10 +26,10 @@ function searchAndShow() {
         data: {},
         dataType: 'json',
         success: function (data) {
-            console.log(data);
             $('.data-tr').remove();
+            $('#count-span').text(data.length);
             var maKey = [];
-            if (data.size !== 0) {
+            if (data.length !== 0) {
                 var maObject = JSON.parse(data[0].ma.replace(/'/g, '"'));
                 console.log(maKey);
                 for (var key in maObject) {
@@ -50,9 +50,14 @@ function searchAndShow() {
                     $('<td></td>').text(a.turnOverRate + '%')
                 );
                 for (var key in maKey) {
-                    tr.append(
-                        $('<td></td>').text(maObject[maKey[key]])
-                    );
+                    var value = maObject[maKey[key]];
+                    var td = $('<td></td>').text(value);
+                    if (value < 0) {
+                        td.css('color', 'green');
+                    } else {
+                        td.css('color', 'red');
+                    }
+                    tr.append(td);
                 }
                 $('.table').append(tr);
             }
@@ -76,7 +81,7 @@ $('#daily-button').on('click', function () {
         data: {},
         dataType: 'json',
         success: function (data) {
-            if (data.status){
+            if (data.status) {
                 alert('计算完成');
                 location = location;
             }

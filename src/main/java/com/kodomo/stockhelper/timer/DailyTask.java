@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * @author Shuaiyu Yao
  * @create 2020-02-13 18:38
@@ -20,11 +22,10 @@ public class DailyTask {
     }
 
     @Scheduled(cron = "0 0 16 * * MON-FRI")
-    public void dailyFetch(){
+    public void dailyFetch() {
+        Date now = new Date();
         log.info("开始爬取并分析每日数据...");
         //爬取每日数据
-        dailyFetchHelper.fetchDailyData();
-        //计算结果
-        dailyFetchHelper.calculateRecommendedData();
+        dailyFetchHelper.dailyTask(now);
     }
 }

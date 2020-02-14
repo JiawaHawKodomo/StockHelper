@@ -17,17 +17,21 @@ public class RequestTools {
      * @return String
      */
     public static String sendGetRequest(String url, HttpHeaders headers) {
-        RestTemplate client = new RestTemplate();
+        try {
+            RestTemplate client = new RestTemplate();
 
-        HttpMethod method = HttpMethod.GET;
-        // 以表单的方式提交
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        //将请求头部和参数合成一个请求
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(headers);
-        //执行HTTP请求，将返回的结构使用String 类格式化
-        ResponseEntity<String> response = client.exchange(url, method, requestEntity, String.class);
+            HttpMethod method = HttpMethod.GET;
+            // 以表单的方式提交
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            //将请求头部和参数合成一个请求
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(headers);
+            //执行HTTP请求，将返回的结构使用String 类格式化
+            ResponseEntity<String> response = client.exchange(url, method, requestEntity, String.class);
 
-        return response.getBody();
+            return response.getBody();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String sendGetRequest(String url) {

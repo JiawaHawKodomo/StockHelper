@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,4 +19,8 @@ public interface StockMaDao extends JpaRepository<StockMa, Integer> {
     @Modifying
     @Query(value = "DELETE FROM stock_ma WHERE TO_DAYS(DATE)=TO_DAYS(NOW());", nativeQuery = true)
     void deleteTodayData();
+
+    @Modifying
+    @Query(value = "DELETE FROM stock_ma WHERE TO_DAYS(DATE)=TO_DAYS(?1);", nativeQuery = true)
+    void deleteByDate(Date date);
 }

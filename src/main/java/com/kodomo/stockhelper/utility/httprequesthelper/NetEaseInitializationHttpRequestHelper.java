@@ -37,6 +37,11 @@ public class NetEaseInitializationHttpRequestHelper implements InitializationHtt
         String url = "http://img1.money.126.net/data/hs/kline/day/times/" + formattedId + ".json";
         String response = RequestTools.sendGetRequest(url);
 
+        //如果请求失败
+        if (response == null) {
+            return new ArrayList<>();
+        }
+
         Map<String, Object> map = new JacksonJsonParser().parseMap(response);
         List<Double> values = (List<Double>) map.get("closes");
         List<String> times = (List<String>) map.get("times");

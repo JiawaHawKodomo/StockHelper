@@ -3,8 +3,8 @@ package com.kodomo.stockhelper.utility;
 import com.kodomo.stockhelper.dao.*;
 import com.kodomo.stockhelper.entity.*;
 import com.kodomo.stockhelper.utility.httprequesthelper.DailyHttpRequestHelper;
+import com.kodomo.stockhelper.utility.recommender.Recommender;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -26,6 +25,7 @@ public class DailyFetchHelper {
     @Value("${stockhelper.recommendedMinTurnOverRate}")
     private Double recommendedMinTurnOverRate;
 
+    private final Recommender recommender;
     private final StockMaHelper stockMaHelper;
     private final StockInfoDao stockInfoDao;
     private final StockMaDao stockMaDao;
@@ -34,7 +34,7 @@ public class DailyFetchHelper {
     private final DailyHttpRequestHelper dailyHttpRequestHelper;
     private final RecommendedStockDao recommendedStockDao;
 
-    public DailyFetchHelper(StockInfoDao stockInfoDao, @Qualifier("tencentDailyHttpRequestHelper") DailyHttpRequestHelper dailyHttpRequestHelper, StockMaHelper stockMaHelper, StockMaDao stockMaDao, RecommendedStockDao recommendedStockDao, StockTurnOverRateDao stockTurnOverRateDao, StockRecordDao stockRecordDao) {
+    public DailyFetchHelper(StockInfoDao stockInfoDao, @Qualifier("tencentDailyHttpRequestHelper") DailyHttpRequestHelper dailyHttpRequestHelper, StockMaHelper stockMaHelper, StockMaDao stockMaDao, RecommendedStockDao recommendedStockDao, StockTurnOverRateDao stockTurnOverRateDao, StockRecordDao stockRecordDao, @Qualifier("recommender3") Recommender recommender) {
         this.stockInfoDao = stockInfoDao;
         this.dailyHttpRequestHelper = dailyHttpRequestHelper;
         this.stockMaHelper = stockMaHelper;
@@ -42,17 +42,25 @@ public class DailyFetchHelper {
         this.recommendedStockDao = recommendedStockDao;
         this.stockTurnOverRateDao = stockTurnOverRateDao;
         this.stockRecordDao = stockRecordDao;
+        this.recommender = recommender;
+    }
+
+    public void dailyTask(Date date){
+        //爬取每日数据
+        fetchDailyData(date);
+        //计算结果
+        calculateRecommendedData(date);
     }
 
     /**
      * 采集每日数据
      */
     @Transactional
-    public void fetchDailyData() {
+    public void fetchDailyData(Date date) {
         //删除今日数据
-        stockMaDao.deleteTodayData();
-        stockRecordDao.deleteTodayData();
-        stockTurnOverRateDao.deleteTodayData();
+        stockMaDao.deleteByDate(date);
+        stockRecordDao.deleteByDate(date);
+        stockTurnOverRateDao.deleteByDate(date);
 
         log.info("开始爬取今天的数据...");
         List<StockInfo> stockInfos = stockInfoDao.findByLimit(initialDataLimit);
@@ -80,42 +88,14 @@ public class DailyFetchHelper {
         }
     }
 
-
     /**
      * 计算推荐数据
      */
     @Transactional
-    public void calculateRecommendedData() {
+    public void calculateRecommendedData(Date date) {
         //删除今日推荐数据
-        recommendedStockDao.deleteTodayData();
+        recommendedStockDao.deleteByDate(date);
         //生成推荐数据
-        long now = new Date().getTime();
-        Date today = new Date(now - (now % (1000L * 3600 * 24)));
-
-        //筛选所有合格的
-        List<Object[]> dataList = recommendedStockDao.filter(recommendedMinTurnOverRate);
-        List<RecommendedStock> grouped = dataList.stream().map(a -> {
-            RecommendedDTO recommendedDTO = new RecommendedDTO();
-            recommendedDTO.setStockId((String) a[0]);
-            recommendedDTO.setTurnOverRate((Double) a[1]);
-            recommendedDTO.setDeltaMa((Double) a[2]);
-            recommendedDTO.setMaSegment((Integer) a[3]);
-            return recommendedDTO;
-        }).collect(Collectors.groupingBy(RecommendedDTO::getStockId, Collectors.toList()))
-                .values().stream()
-                .filter(a -> a.size() == maSegment.size())
-                .map(a -> {
-                    RecommendedStock recommendedStock = new RecommendedStock();
-                    StockInfo stockInfo = new StockInfo();
-                    stockInfo.setStockId(a.get(0).getStockId());
-                    recommendedStock.setStockInfo(stockInfo);
-                    recommendedStock.setDate(today);
-                    recommendedStock.setTurnOverRate(a.get(0).getTurnOverRate());
-                    recommendedStock.setMa("{" + a.stream().map(b -> "'ma" + b.getMaSegment() + "':'" + String.format("%.2f", b.getDeltaMa()) + "'").reduce((c, d) -> c + "," + d).orElse("") + "}");
-                    return recommendedStock;
-                }).collect(Collectors.toList());
-
-        recommendedStockDao.saveAll(grouped);
-        log.info("共推荐" + grouped.size() + "个股票.");
+        recommender.calculateRecommendedData(date);
     }
 }

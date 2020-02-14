@@ -45,6 +45,7 @@ public class HttpRequestTest {
     }
 
     @Test
+    @Ignore
     public void NetEaseInitialTest() {
         List<StockRecord> stockRecords = netEaseHttpRequestHelper.fetchStockRecordById("000022");
         System.out.println(stockRecords);
@@ -61,19 +62,22 @@ public class HttpRequestTest {
 
 
     @Test
+    @Ignore
     public void fetchInitialDataTest() {
         initializationFetchHelper.fetchInitialData();
     }
 
 
     @Test
+    @Ignore
     public void getValueByListTest() {
         System.out.println(maSegment);
     }
 
 
     @Test
+    @Ignore
     public void daiayFetchTest() {
-        dailyFetchHelper.fetchDailyData();
+        dailyFetchHelper.fetchDailyData(new Date());
     }
 }

@@ -22,4 +22,8 @@ public interface StockRecordDao extends JpaRepository<StockRecord, Integer> {
     @Modifying
     @Query(value = "DELETE FROM stock_record WHERE TO_DAYS(DATE)=TO_DAYS(NOW());", nativeQuery = true)
     void deleteTodayData();
+
+    @Modifying
+    @Query(value = "DELETE FROM stock_record WHERE TO_DAYS(DATE)=TO_DAYS(?1);", nativeQuery = true)
+    void deleteByDate(Date date);
 }

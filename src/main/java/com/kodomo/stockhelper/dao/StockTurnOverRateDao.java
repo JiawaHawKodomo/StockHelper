@@ -22,4 +22,8 @@ public interface StockTurnOverRateDao extends JpaRepository<StockTurnOverRate, I
     @Modifying
     @Query(value = "DELETE FROM stock_turn_over_rate WHERE TO_DAYS(DATE)=TO_DAYS(NOW());", nativeQuery = true)
     void deleteTodayData();
+
+    @Modifying
+    @Query(value = "DELETE FROM stock_turn_over_rate WHERE TO_DAYS(DATE)=TO_DAYS(?1);", nativeQuery = true)
+    void deleteByDate(Date date);
 }

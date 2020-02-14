@@ -1,12 +1,10 @@
 package com.kodomo.stockhelper.timer;
 
-import com.kodomo.stockhelper.dao.StockInfoDao;
-import com.kodomo.stockhelper.dao.StockMaDao;
-import com.kodomo.stockhelper.dao.StockRecordDao;
-import com.kodomo.stockhelper.dao.StockTurnOverRateDao;
+import com.kodomo.stockhelper.dao.*;
 import com.kodomo.stockhelper.utility.FetchAllStockIdHelper;
 import com.kodomo.stockhelper.utility.InitializationFetchHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -22,14 +20,16 @@ public class ApplicationRunnerFetcher implements ApplicationRunner {
     private final StockRecordDao stockRecordDao;
     private final StockMaDao stockMaDao;
     private final StockTurnOverRateDao stockTurnOverRateDao;
+    private final RecommendedStockDao recommendedStockDao;
 
-    public ApplicationRunnerFetcher(FetchAllStockIdHelper fetchAllStockIdHelper, InitializationFetchHelper initializationFetchHelper, StockInfoDao stockInfoDao, StockRecordDao stockRecordDao, StockMaDao stockMaDao, StockTurnOverRateDao stockTurnOverRateDao) {
+    public ApplicationRunnerFetcher(FetchAllStockIdHelper fetchAllStockIdHelper, InitializationFetchHelper initializationFetchHelper, StockInfoDao stockInfoDao, StockRecordDao stockRecordDao, StockMaDao stockMaDao, StockTurnOverRateDao stockTurnOverRateDao, RecommendedStockDao recommendedStockDao) {
         this.fetchAllStockIdHelper = fetchAllStockIdHelper;
         this.initializationFetchHelper = initializationFetchHelper;
         this.stockInfoDao = stockInfoDao;
         this.stockRecordDao = stockRecordDao;
         this.stockMaDao = stockMaDao;
         this.stockTurnOverRateDao = stockTurnOverRateDao;
+        this.recommendedStockDao = recommendedStockDao;
     }
 
     @Override
@@ -40,6 +40,8 @@ public class ApplicationRunnerFetcher implements ApplicationRunner {
                 log.info("初始化数据");
                 //清空历史数据
                 log.info("正在清空历史数据...");
+                recommendedStockDao.deleteAll();
+                recommendedStockDao.flush();
                 stockRecordDao.deleteAll();
                 stockRecordDao.flush();
                 stockMaDao.deleteAll();
