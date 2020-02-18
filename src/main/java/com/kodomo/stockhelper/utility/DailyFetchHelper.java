@@ -7,15 +7,15 @@ import com.kodomo.stockhelper.utility.recommender.Recommender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@Component
+@Service
 public class DailyFetchHelper {
 
     @Value("${stockhelper.initialDataLimit}")
@@ -34,7 +34,7 @@ public class DailyFetchHelper {
     private final DailyHttpRequestHelper dailyHttpRequestHelper;
     private final RecommendedStockDao recommendedStockDao;
 
-    public DailyFetchHelper(StockInfoDao stockInfoDao, @Qualifier("tencentDailyHttpRequestHelper") DailyHttpRequestHelper dailyHttpRequestHelper, StockMaHelper stockMaHelper, StockMaDao stockMaDao, RecommendedStockDao recommendedStockDao, StockTurnOverRateDao stockTurnOverRateDao, StockRecordDao stockRecordDao, @Qualifier("recommender3") Recommender recommender) {
+    public DailyFetchHelper(StockInfoDao stockInfoDao, @Qualifier("tencentDailyHttpRequestHelper") DailyHttpRequestHelper dailyHttpRequestHelper, StockMaHelper stockMaHelper, StockMaDao stockMaDao, RecommendedStockDao recommendedStockDao, StockTurnOverRateDao stockTurnOverRateDao, StockRecordDao stockRecordDao, @Qualifier("recommender3Percentage") Recommender recommender) {
         this.stockInfoDao = stockInfoDao;
         this.dailyHttpRequestHelper = dailyHttpRequestHelper;
         this.stockMaHelper = stockMaHelper;
@@ -45,11 +45,17 @@ public class DailyFetchHelper {
         this.recommender = recommender;
     }
 
-    public void dailyTask(Date date){
+    @Transactional
+    public void dailyTask(Date date) {
+        Date startTime = new Date();
+        log.info("开始执行今日定时任务...");
         //爬取每日数据
         fetchDailyData(date);
         //计算结果
         calculateRecommendedData(date);
+        log.info("定时任务执行完毕");
+        Date endTime = new Date();
+        log.info("Time: 共花费: " + (endTime.getTime() - startTime.getTime()) / 1000.0 + "s");
     }
 
     /**
@@ -58,9 +64,11 @@ public class DailyFetchHelper {
     @Transactional
     public void fetchDailyData(Date date) {
         //删除今日数据
+        log.info("正在删除今天的冗余数据...");
         stockMaDao.deleteByDate(date);
         stockRecordDao.deleteByDate(date);
         stockTurnOverRateDao.deleteByDate(date);
+        log.info("今天的冗余数据删除完毕");
 
         log.info("开始爬取今天的数据...");
         List<StockInfo> stockInfos = stockInfoDao.findByLimit(initialDataLimit);
@@ -69,10 +77,14 @@ public class DailyFetchHelper {
         for (StockInfo stockInfo : stockInfos) {
             int count = dailyHttpRequestHelper.fetchDataAndSave(stockInfo.getStockId());
             totalCount += count;
+            if (totalCount % 100 == 0) {
+                log.info("已爬取" + totalCount + "条数据...");
+            }
         }
         log.info("爬取结束, 今天共爬取" + totalCount + "条数据");
 
         //计算今日的各ma值
+        log.info("正在计算今天的MA值...");
         Date now = new Date();
         for (StockInfo stockInfo : stockInfos) {
             List<StockMa> stockMaList = new ArrayList<>(maSegment.size());
@@ -83,7 +95,10 @@ public class DailyFetchHelper {
             //保存ma
             try {
                 stockMaDao.saveAll(stockMaList);
-            } catch (Exception ignored) {
+                log.info("股票" + stockInfo.getStockId() + "的Ma保存完毕.");
+            } catch (Exception e) {
+                log.error("股票" + stockInfo.getStockId() + "的Ma保存出错.");
+                log.error(e.getMessage());
             }
         }
     }
@@ -96,6 +111,8 @@ public class DailyFetchHelper {
         //删除今日推荐数据
         recommendedStockDao.deleteByDate(date);
         //生成推荐数据
+        log.info("正在计算推荐数据...");
         recommender.calculateRecommendedData(date);
+        log.info("推荐数据计算完成");
     }
 }

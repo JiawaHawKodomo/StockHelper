@@ -18,6 +18,16 @@ function dateFormat(fmt, date) {
     return fmt;
 }
 
+function isNumber(val) {
+    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+    var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+    if (regPos.test(val) || regNeg.test(val)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function searchAndShow() {
     const dateStr = $('#date-input').val();
     $.ajax({
@@ -27,6 +37,7 @@ function searchAndShow() {
         dataType: 'json',
         success: function (data) {
             $('.data-tr').remove();
+            $('.layui-form').remove();
             $('#count-span').text(data.length);
             var maKey = [];
             if (data.length !== 0) {
@@ -35,6 +46,7 @@ function searchAndShow() {
                 for (var key in maObject) {
                     $('.tr-head').append(
                         $('<th></th>').text(key).attr('class', 'data-tr')
+                            .attr('lay-data', '{field:"' + key + '", sort:true}')
                     );
                     maKey.push(key);
                 }
@@ -42,25 +54,28 @@ function searchAndShow() {
             for (var a in data) {
                 a = data[a];
                 var maObject = JSON.parse(a.ma.replace(/'/g, '"'));
-                var tr = $('<tr></tr>').attr('class', 'data-tr').append(
-                    $('<td></td>').text(a.stockInfo.stockId)
-                ).append(
-                    $('<td></td>').text(a.stockInfo.name)
-                ).append(
-                    $('<td></td>').text(a.turnOverRate + '%')
-                );
+                var tr = $('<tr></tr>')
+                    .attr('class', 'data-tr')
+                    .append(
+                        $('<td></td>').text(a.stockInfo.stockId)
+                    ).append(
+                        $('<td></td>').text(a.stockInfo.name)
+                    ).append(
+                        $('<td></td>').text(a.turnOverRate + '%')
+                    );
                 for (var key in maKey) {
                     var value = maObject[maKey[key]];
-                    var td = $('<td></td>').text(value);
-                    if (value < 0) {
-                        td.css('color', 'green');
-                    } else {
-                        td.css('color', 'red');
+                    if (a.isPercentage) {
+                        value = "" + value + "%";
                     }
+                    var td = $('<td></td>').text(value);
                     tr.append(td);
                 }
-                $('.table').append(tr);
+                $('tbody').append(tr);
             }
+            layui.table.init('table', {
+                limit: 99999
+            });
         }
     })
 }
@@ -88,3 +103,17 @@ $('#daily-button').on('click', function () {
         }
     });
 });
+
+setInterval(function () {
+    $.each($('.layui-table-cell'), function (i, val) {
+        const text = $(this).text().replace('%', '');
+        if (isNumber(text) && text.indexOf(".") !== -1) {
+            const num = Number(text);
+            if (num > 0) {
+                $(this).css('color', 'red');
+            } else if (num < 0) {
+                $(this).css('color', 'green');
+            }
+        }
+    });
+}, 200)

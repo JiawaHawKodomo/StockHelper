@@ -38,10 +38,12 @@ public class Recommender3 implements Recommender {
 
         //筛选所有合格的
         List<Object[]> dataList = recommendedStockDao.filter2(recommendedMinTurnOverRate);
-        List<RecommendedStock> grouped = dataList.stream().map(RecommenderUtility::objectArrayToRecommendedDTO).filter(a -> {
-            if (a.getMaSegment() == 5) return a.getDeltaMa() != 0.0;
-            else return a.getDeltaMa() > 0;
-        })
+        List<RecommendedStock> grouped = dataList.stream()
+                .map(RecommenderUtility::objectArrayToRecommendedDTO)
+                .filter(a -> {
+                    if (a.getMaSegment() == 5) return a.getDeltaMa() != 0.0;
+                    else return a.getDeltaMa() > 0;
+                })
                 .collect(Collectors.groupingBy(RecommendedDTO::getStockId, Collectors.toList()))
                 .values().stream()
                 .filter(a -> a.size() == maSegment.size())

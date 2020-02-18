@@ -62,7 +62,7 @@ public class IndexController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/refresh")
+    @GetMapping(value = "/refresh")
     public Map<String, String> refresh() {
         dailyTask.dailyFetch();
         Map<String, String> response = new HashMap<>();

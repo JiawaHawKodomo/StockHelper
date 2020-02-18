@@ -32,6 +32,13 @@ public class RecommenderUtility {
         recommendedStock.setDate(date);
         recommendedStock.setTurnOverRate(a.get(0).getTurnOverRate());
         recommendedStock.setMa("{" + a.stream().map(b -> "'ma" + b.getMaSegment() + "':'" + String.format("%.2f", b.getDeltaMa()) + "'").reduce((c, d) -> c + "," + d).orElse("") + "}");
+        recommendedStock.setIsPercentage(false);
+        return recommendedStock;
+    }
+
+    static RecommendedStock recommendedDTOToRecommendedStock(List<RecommendedDTO> a, Date date, boolean isPercentage) {
+        RecommendedStock recommendedStock = recommendedDTOToRecommendedStock(a, date);
+        recommendedStock.setIsPercentage(isPercentage);
         return recommendedStock;
     }
 }

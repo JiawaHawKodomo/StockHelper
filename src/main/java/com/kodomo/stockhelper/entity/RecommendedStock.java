@@ -43,4 +43,7 @@ public class RecommendedStock {
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
     private Date date;
+
+    @Column(name = "isPercentage", columnDefinition = " boolean default false ", nullable = false)
+    private Boolean isPercentage;
 }

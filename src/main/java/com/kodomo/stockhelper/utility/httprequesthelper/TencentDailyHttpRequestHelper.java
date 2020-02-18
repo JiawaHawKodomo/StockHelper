@@ -50,8 +50,8 @@ public class TencentDailyHttpRequestHelper implements DailyHttpRequestHelper {
 
             return 2;
         } catch (Exception e) {
+            log.error("股票id: " + stockId + "爬取不成功, 异常: ");
             log.error(e.getMessage());
-            e.printStackTrace();
             return 0;
         }
     }
