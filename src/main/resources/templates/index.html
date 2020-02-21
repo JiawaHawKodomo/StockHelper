@@ -17,7 +17,7 @@
     <tr class="tr-head">
         <th lay-data="{field:'id', sort:true}">股票代码</th>
         <th lay-data="{field:'name', sort:true}">名称</th>
-        <th lay-data="{field:'turn_over_rate', sort:true}">换手率</th>
+        <th lay-data="{field:'turn_over_rate', sort:true, templet: '#tpl-turn-over-rate'}">换手率</th>
     </tr>
     </thead>
 
@@ -36,6 +36,101 @@
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/lay/layui.all.js}"></script>
 <script th:src="@{/js/index.js}"></script>
+<script type="text/html" id="tpl-turn-over-rate">
+    <div>
+        {{Number(d.turn_over_rate)/100.0}}%
+    </div>
+</script>
+<script type="text/html" id="tpl-ma5">
+    {{#
+    var value=d.ma5;
+
+    var color='black';
+    if (value<0)color='green';
+    else if (value>0)color='red';
+
+    value=(value/100.0).toFixed(2);
+    if(isPercentage){
+        value=value+'%';
+    }
+    }}
+
+    <div style="color: {{color}}">
+        {{value}}
+    </div>
+</script>
+<script type="text/html" id="tpl-ma10">
+    {{#
+    var value=d.ma10;
+
+    var color='black';
+    if (value<0)color='green';
+    else if (value>0)color='red';
+
+    value=(value/100.0).toFixed(2);
+    if(isPercentage){
+    value=value+'%';
+    }
+    }}
+
+    <div style="color: {{color}}">
+        {{value}}
+    </div>
+</script>
+<script type="text/html" id="tpl-ma30">
+    {{#
+    var value=d.ma30;
+
+    var color='black';
+    if (value<0)color='green';
+    else if (value>0)color='red';
+
+    value=(value/100.0).toFixed(2);
+    if(isPercentage){
+    value=value+'%';
+    }
+    }}
+
+    <div style="color: {{color}}">
+        {{value}}
+    </div>
+</script>
+<script type="text/html" id="tpl-ma60">
+    {{#
+    var value=d.ma60;
+
+    var color='black';
+    if (value<0)color='green';
+    else if (value>0)color='red';
+
+    value=(value/100.0).toFixed(2);
+    if(isPercentage){
+    value=value+'%';
+    }
+    }}
+
+    <div style="color: {{color}}">
+        {{value}}
+    </div>
+</script>
+<script type="text/html" id="tpl-ma120">
+    {{#
+    var value=d.ma120;
+
+    var color='black';
+    if (value<0)color='green';
+    else if (value>0)color='red';
+
+    value=(value/100.0).toFixed(2);
+    if(isPercentage){
+    value=value+'%';
+    }
+    }}
+
+    <div style="color: {{color}}">
+        {{value}}
+    </div>
+</script>
 </body>
 </html>
 

@@ -1,3 +1,5 @@
+var isPercentage = false;
+
 function dateFormat(fmt, date) {
     let ret;
     const opt = {
@@ -46,7 +48,7 @@ function searchAndShow() {
                 for (var key in maObject) {
                     $('.tr-head').append(
                         $('<th></th>').text(key).attr('class', 'data-tr')
-                            .attr('lay-data', '{field:"' + key + '", sort:true}')
+                            .attr('lay-data', '{field:"' + key + '", sort:true, templet: "#tpl-' + key + '"}')
                     );
                     maKey.push(key);
                 }
@@ -61,13 +63,14 @@ function searchAndShow() {
                     ).append(
                         $('<td></td>').text(a.stockInfo.name)
                     ).append(
-                        $('<td></td>').text(a.turnOverRate + '%')
+                        $('<td></td>').text(Number(a.turnOverRate) * 100)
                     );
                 for (var key in maKey) {
-                    var value = maObject[maKey[key]];
+                    var value = Number((maObject[maKey[key]] * 100).toFixed(2));
                     if (a.isPercentage) {
-                        value = (value * 100).toFixed(2);
-                        value = "" + value + "%";
+                        isPercentage = true;
+                        value = Number((value * 100).toFixed(0));
+                        //value = "" + value + "%";
                     }
                     var td = $('<td></td>').text(value);
                     tr.append(td);
@@ -105,16 +108,24 @@ $('#daily-button').on('click', function () {
     });
 });
 
-setInterval(function () {
-    $.each($('.layui-table-cell'), function (i, val) {
-        const text = $(this).text().replace('%', '');
-        if (isNumber(text) && text.indexOf(".") !== -1) {
-            const num = Number(text);
-            if (num > 0) {
-                $(this).css('color', 'red');
-            } else if (num < 0) {
-                $(this).css('color', 'green');
-            }
-        }
-    });
-}, 200)
+// setInterval(function () {
+//     $.each($('.layui-table-cell'), function (i, val) {
+//         const text = $(this).text().replace('%', '');
+//         if (isNumber(text) && text.length !== 6) {
+//             const num = Number(text);
+//             if (num > 0) {
+//                 $(this).css('color', 'red');
+//             } else if (num < 0) {
+//                 $(this).css('color', 'green');
+//             }
+//
+//             var newText = text;
+//             if (newText.indexOf('.') === -1) {
+//                 newText = newText;
+//             }
+//             if (isPercentage && text.indexOf('%') === -1) {
+//                 $(this).text(text + '%');
+//             }
+//         }
+//     });
+// }, 100);
