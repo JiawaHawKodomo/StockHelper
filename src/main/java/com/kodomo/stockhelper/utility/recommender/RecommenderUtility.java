@@ -31,7 +31,7 @@ public class RecommenderUtility {
         recommendedStock.setStockInfo(stockInfo);
         recommendedStock.setDate(date);
         recommendedStock.setTurnOverRate(a.get(0).getTurnOverRate());
-        recommendedStock.setMa("{" + a.stream().map(b -> "'ma" + b.getMaSegment() + "':'" + String.format("%.2f", b.getDeltaMa()) + "'").reduce((c, d) -> c + "," + d).orElse("") + "}");
+        recommendedStock.setMa("{" + a.stream().map(b -> "'ma" + b.getMaSegment() + "':'" + b.getDeltaMa() + "'").reduce((c, d) -> c + "," + d).orElse("") + "}");
         recommendedStock.setIsPercentage(false);
         return recommendedStock;
     }

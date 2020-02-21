@@ -41,6 +41,9 @@ public class Recommender3 implements Recommender {
         List<RecommendedStock> grouped = dataList.stream()
                 .map(RecommenderUtility::objectArrayToRecommendedDTO)
                 .filter(a -> {
+                    if (a.getMaSegment() == null || a.getDeltaMa() == null) {
+                        return false;
+                    }
                     if (a.getMaSegment() == 5) return a.getDeltaMa() != 0.0;
                     else return a.getDeltaMa() > 0;
                 })

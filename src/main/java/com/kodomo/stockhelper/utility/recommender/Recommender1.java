@@ -38,7 +38,8 @@ public class Recommender1 implements Recommender {
 
         //筛选所有合格的
         List<Object[]> dataList = recommendedStockDao.filter(recommendedMinTurnOverRate);
-        List<RecommendedStock> grouped = dataList.stream().map(RecommenderUtility::objectArrayToRecommendedDTO)
+        List<RecommendedStock> grouped = dataList.stream()
+                .map(RecommenderUtility::objectArrayToRecommendedDTO)
                 .collect(Collectors.groupingBy(RecommendedDTO::getStockId, Collectors.toList()))
                 .values().stream()
                 .filter(a -> a.size() == maSegment.size())

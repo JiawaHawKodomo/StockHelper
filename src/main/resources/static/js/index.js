@@ -66,6 +66,7 @@ function searchAndShow() {
                 for (var key in maKey) {
                     var value = maObject[maKey[key]];
                     if (a.isPercentage) {
+                        value = (value * 100).toFixed(2);
                         value = "" + value + "%";
                     }
                     var td = $('<td></td>').text(value);

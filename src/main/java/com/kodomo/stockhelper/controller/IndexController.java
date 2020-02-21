@@ -4,6 +4,7 @@ import com.kodomo.stockhelper.dao.RecommendedStockDao;
 import com.kodomo.stockhelper.entity.RecommendedStock;
 import com.kodomo.stockhelper.entity.StockInfo;
 import com.kodomo.stockhelper.timer.DailyTask;
+import com.kodomo.stockhelper.utility.DailyFetchHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
@@ -29,10 +30,12 @@ public class IndexController {
 
     private final RecommendedStockDao recommendedStockDao;
     private final DailyTask dailyTask;
+    private final DailyFetchHelper dailyFetchHelper;
 
-    public IndexController(RecommendedStockDao recommendedStockDao, DailyTask dailyTask) {
+    public IndexController(RecommendedStockDao recommendedStockDao, DailyTask dailyTask, DailyFetchHelper dailyFetchHelper) {
         this.recommendedStockDao = recommendedStockDao;
         this.dailyTask = dailyTask;
+        this.dailyFetchHelper = dailyFetchHelper;
     }
 
 
@@ -65,6 +68,15 @@ public class IndexController {
     @GetMapping(value = "/refresh")
     public Map<String, String> refresh() {
         dailyTask.dailyFetch();
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "ok");
+        return response;
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/recommend")
+    public Map<String, String> recommend() {
+        dailyFetchHelper.calculateRecommendedData(new Date());
         Map<String, String> response = new HashMap<>();
         response.put("status", "ok");
         return response;
