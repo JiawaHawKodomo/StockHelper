@@ -10,12 +10,17 @@
     <p>请选择时间:
     </p><input type="date" id="date-input" class="layui-input">
     <button id="search-button" class="layui-btn">查询</button>
-    <div class="layui-elem-field layui-field-title">共筛选出<span id="count-span">0</span>支</div>
+    <div class="layui-elem-field layui-field-title">
+        <p>共筛选出<span id="count-span">0</span>支</p>
+        <p>股票代码后带<i class="layui-icon layui-icon-rate-solid"></i>表示该股票昨日也被推荐</p>
+    </div>
+
 </div>
 <table class="table layui-table" lay-filter="table">
     <thead>
     <tr class="tr-head">
-        <th lay-data="{field:'id', sort:true}">股票代码</th>
+        <th lay-data="{field:'id', sort:true, templet:'#tpl-stock-id'}">股票代码</th>
+        <th lay-data="{field:'recommend_times', sort:true}">近30日推荐次数</th>
         <th lay-data="{field:'name', sort:true}">名称</th>
         <th lay-data="{field:'turn_over_rate', sort:true, templet: '#tpl-turn-over-rate'}">换手率</th>
     </tr>
@@ -24,6 +29,7 @@
     <tbody>
     <tr class="data-tr" style="display: none">
         <th>111111</th>
+        <th>2</th>
         <th>名称</th>
         <th>1%</th>
     </tr>
@@ -36,6 +42,22 @@
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/lay/layui.all.js}"></script>
 <script th:src="@{/js/index.js}"></script>
+<script type="text/html" id="tpl-stock-id">
+    {{#
+    var id=d.id;
+    var clazz='';
+    if(id.indexOf('*')===0){
+        id=id.substr(1);
+        clazz='layui-icon-rate-solid';
+    }
+    }}
+
+    <div>
+        {{id}}
+        <i class="layui-icon {{clazz}}"></i>
+    </div>
+
+</script>
 <script type="text/html" id="tpl-turn-over-rate">
     <div>
         {{Number(d.turn_over_rate)/100.0}}%
@@ -51,7 +73,7 @@
 
     value=(value/100.0).toFixed(2);
     if(isPercentage){
-        value=value+'%';
+    value=value+'%';
     }
     }}
 

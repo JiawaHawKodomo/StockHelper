@@ -20,7 +20,7 @@ import java.util.Date;
         indexes = {
                 @Index(name = "time", columnList = "date")
         })
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class RecommendedStock {
 
     @Id
@@ -44,6 +44,12 @@ public class RecommendedStock {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
     private Date date;
 
-    @Column(name = "isPercentage", columnDefinition = " boolean default false ", nullable = false)
+    @Column(name = "isPercentage", columnDefinition = " boolean default false ")
     private Boolean isPercentage;
+
+    @Column(name = "near_30_days_recommend_times", columnDefinition = " integer default 0 ")
+    private Integer near30DaysRecommendTimes;
+
+    @Column(name = "yesterday_recommended", columnDefinition = " boolean default false ")
+    private Boolean yesterdayRecommended;
 }

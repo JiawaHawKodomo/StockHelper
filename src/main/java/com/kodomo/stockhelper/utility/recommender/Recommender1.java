@@ -37,9 +37,8 @@ public class Recommender1 implements Recommender {
         Date day = new Date(date.getTime() - (date.getTime() % (1000L * 3600 * 24)));
 
         //筛选所有合格的
-        List<Object[]> dataList = recommendedStockDao.filter(recommendedMinTurnOverRate);
+        List<RecommendedDTO> dataList = recommendedStockDao.filter(recommendedMinTurnOverRate);
         List<RecommendedStock> grouped = dataList.stream()
-                .map(RecommenderUtility::objectArrayToRecommendedDTO)
                 .collect(Collectors.groupingBy(RecommendedDTO::getStockId, Collectors.toList()))
                 .values().stream()
                 .filter(a -> a.size() == maSegment.size())

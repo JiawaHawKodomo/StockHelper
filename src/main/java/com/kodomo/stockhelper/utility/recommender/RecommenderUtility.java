@@ -7,21 +7,11 @@ import com.kodomo.stockhelper.entity.StockInfo;
 import java.util.Date;
 import java.util.List;
 
-public class RecommenderUtility {
-
-    /**
-     * @author Shuaiyu Yao
-     * @create 2020-02-14 8:43
-     **/
-
-    static RecommendedDTO objectArrayToRecommendedDTO(Object[] a) {
-        RecommendedDTO recommendedDTO = new RecommendedDTO();
-        recommendedDTO.setStockId((String) a[0]);
-        recommendedDTO.setTurnOverRate((Double) a[1]);
-        recommendedDTO.setDeltaMa((Double) a[2]);
-        recommendedDTO.setMaSegment((Integer) a[3]);
-        return recommendedDTO;
-    }
+/**
+ * @author Shuaiyu Yao
+ * @create 2020-02-14 8:43
+ **/
+class RecommenderUtility {
 
 
     static RecommendedStock recommendedDTOToRecommendedStock(List<RecommendedDTO> a, Date date) {

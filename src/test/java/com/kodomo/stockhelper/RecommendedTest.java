@@ -1,6 +1,7 @@
 package com.kodomo.stockhelper;
 
 import com.kodomo.stockhelper.dao.RecommendedStockDao;
+import com.kodomo.stockhelper.entity.RecommendedTimesDTO;
 import com.kodomo.stockhelper.utility.DailyFetchHelper;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,5 +37,21 @@ public class RecommendedTest {
         //dailyFetchHelper.fetchDailyData();
 
         dailyFetchHelper.calculateRecommendedData(new Date());
+    }
+
+    @Test
+    @Ignore
+    public void recommendedTimesDTOTest() {
+        List<RecommendedTimesDTO> list = recommendedStockDao.getRecommendTimesNear30Days();
+
+        System.out.println(list);
+    }
+
+    @Test
+    @Ignore
+    public void yesterdayRecommendTimesTest() {
+        List<String> list = recommendedStockDao.getYesterdayRecommendId();
+
+        System.out.println(list);
     }
 }

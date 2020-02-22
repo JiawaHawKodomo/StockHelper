@@ -59,7 +59,9 @@ function searchAndShow() {
                 var tr = $('<tr></tr>')
                     .attr('class', 'data-tr')
                     .append(
-                        $('<td></td>').text(a.stockInfo.stockId)
+                        $('<td></td>').text((a.yesterdayRecommended ? '*' : '') + a.stockInfo.stockId)
+                    ).append(
+                        $('<td></td>').text(a.near30DaysRecommendTimes)
                     ).append(
                         $('<td></td>').text(a.stockInfo.name)
                     ).append(
