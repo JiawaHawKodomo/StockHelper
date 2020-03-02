@@ -21,7 +21,7 @@ public class DailyTask {
         this.dailyFetchHelper = dailyFetchHelper;
     }
 
-    @Scheduled(cron = "0 30 15 * * MON-FRI")
+    @Scheduled(cron = "0 30 15 * * *")
     public void dailyFetch() {
         Date now = new Date();
         log.info("开始爬取并分析每日数据...");
